@@ -1,5 +1,12 @@
 # Ejercicios de ficheros
 
+## Ejercicio 01
+
+Realizar	un	programa	que	reciba	un	nombre	de	directorio	y		muestre	por	pantalla	los	
+nombres	de	ficheros	y	directorios	que	contiene,	su	modo,	si	tienen	o	no	permiso	de	
+lectura	para	el	propietario,	si	son	directorios	y,	para	los	ficheros	modificados	en	los	
+últimos	10	días,	su	fecha	de	acceso	
+
 ## Ejercicio 05
 
 a)	Escribir un programa que escriba en un fichero “registros.dat”  una colección N de registros que incluyan un código y un nombre de cliente, ordenados por código.  Si el fichero no existe, el programa debe crearlo.  
