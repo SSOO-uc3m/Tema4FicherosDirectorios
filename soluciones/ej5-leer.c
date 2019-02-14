@@ -11,7 +11,7 @@
 const char NOMBRE_FICHERO[40]="registros.dat";
 
 void leer(int file);
-void abrirLectura(const char *nombre, int *file);
+void abrirLectura(const char *nombre, int *df);
 
 int main ( int argc, char *argv[] ) 
 {
@@ -38,9 +38,9 @@ void leer(int file){
        	}
 }
 
-void abrirLectura(const char *nombre, int *file){
-	*file = open (nombre, O_RDONLY) ;
-	if (*file == -1) {
+void abrirLectura(const char *nombre, int *df){
+	*df = open (nombre, O_RDONLY) ;
+	if (*df == -1) {
     	fprintf (stderr, "No se ha podido abrir el fichero %s\n",nombre);
 	    exit (-1) ;
         }

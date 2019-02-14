@@ -10,39 +10,40 @@
 
 
 const char NOMBRE_FICHERO[40] = "registros.dat" ;
-const int TAM_NOMBRE = 30;
-const int TAM_REGISTRO = 36;
+const int TAM_NOMBRE = 32;
+const int TAM_REGISTRO = 36; // 32 char + 4 int
+const int NUM_REGISTROS = 10;
 
 void escribir(int file, tipoRegistro *registro);
 void imprimirPosicion(int file);
-void abrirEscritura(const char *nombre, int *file);
+void abrirEscritura(const char *nombre, int *df);
 
 
-int main ( int argc, char *argv[] ) 
+int main ( int argc, char *argv[] )
 {
-	int fichero,i ;	
+	int dfichero,i ;
 	tipoRegistro registro ;
 	printf("tamano registro %ld\n",sizeof(registro));
 	char sNombre[TAM_NOMBRE] ;
 
 	/* Abrir fichero */
-    	abrirEscritura(NOMBRE_FICHERO, &fichero) ; 
+    	abrirEscritura(NOMBRE_FICHERO, &dfichero) ; 
 
 	/* Escribir registros */
-	for(i=1;i<10;i++){
-		
+	for(i=1;i<NUM_REGISTROS;i++){
+
 		registro.codigo = i;
 		sprintf(sNombre, "nombre %d", i);
-		
 		strcpy (registro.nombre, sNombre);
-		escribir(fichero, &registro);
+		escribir(dfichero, &registro);
 	}
 
-	/* Imprimir la posición */
-	imprimirPosicion(fichero);
+	/* Imprimir la posicion */
+	imprimirPosicion(dfichero);
 
 	/* Cerrar fichero */
-	close(fichero);
+	printf("Cierro el fichero para guardar los cambios\n");
+	close(dfichero);
 }
 
 void escribir(int file, tipoRegistro *registro ){
@@ -56,20 +57,20 @@ void  imprimirPosicion(int file){
     printf ("Estoy en la posicion %d del fichero\n", posicion );
 }
 
-void abrirEscritura(const char *nombre, int *file){
-	*file = open (nombre,O_APPEND|O_WRONLY) ;
+void abrirEscritura(const char *nombre, int *df){
+	*df = open (nombre,O_APPEND|O_WRONLY) ;
 
-	if (-1 != *file) {
-	  printf ("El fichero ya existe, anyado al final\n");
+	if (-1 != *df) {
+	  printf ("El fichero %s ya existe, anyado al final\n",NOMBRE_FICHERO);
 	}
 
-	if (-1 == *file) {
-	  printf ("El fichero no existe\n");
+	if (-1 == *df) {
+	  printf ("El fichero %s no existe\n",NOMBRE_FICHERO);
 	  printf ("Se va a crear el fichero\n");
-          *file=open (nombre, O_CREAT| O_WRONLY, S_IWUSR|S_IRUSR);
+          *df=open (nombre, O_CREAT| O_WRONLY, S_IWUSR|S_IRUSR);
 
-	 if (-1 == *file) {
-	      printf ("Error en la creacion :1\n");
+	 if (-1 == *df) {
+	      printf ("Error en la creacion :\n");
 	      exit (-1);
 	  }
 
