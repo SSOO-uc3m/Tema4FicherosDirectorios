@@ -9,64 +9,64 @@
 #include "registro.h"
 
 const int TAM_REGISTRO = 36;
-const int TAM_NOMBRE = 30;
-const char nombreFich[30]="registros.dat";
+const int TAM_NOMBRE = 32;
+const char NOMBRE_FICH[30]="registros.dat";
 
-void abrirEscritura(const char *nombre, int *file);
-void modificarUsuario(tipoRegistro *reg, int *file);
-void leerUsuario(tipoRegistro *reg);
+void abrirEscritura(const char *nombre, int *df);
+void guardarRegistro(tipoRegistro *reg, int *df);
+void leerRegistro(tipoRegistro *reg);
 /*
-Programa que pide un código/posición de persona y escribe los datos en laposición del fichero que corresponden
+Programa que pide un codigo/posicion de persona y escribe los datos en la posicion del fichero que corresponden
 */
 int main () {
-	int f;
-	tipoRegistro reg;       
+	int descriptorFichero;
+	tipoRegistro registro;       
      
-       	abrirEscritura(nombreFich, &f);
+       	abrirEscritura(NOMBRE_FICH, &descriptorFichero);
 	
-	leerUsuario(&reg);  
+	leerRegistro(&registro);  
 
-	modificarUsuario(&reg,&f);
+	guardarRegistro(&registro,&descriptorFichero);
 
-	//resto -1 porque la persona de código n está en la posición n-1
+	//resto -1 porque la persona de codigo n esta en la posicion n-1
+	
    
-	close(f);
+	close(descriptorFichero);
 }
 
  /*  Tratamos de abrir el fichero.  Si no existe se crea  */
-void abrirEscritura(const char *nombre, int *file){
+void abrirEscritura(const char *nombreFichero, int *df){
  	mode_t mode = S_IRUSR | S_IWUSR;
-	*file = open (nombreFich, O_WRONLY|O_CREAT, mode) ;
+	*df = open (nombreFichero, O_WRONLY|O_CREAT, mode) ;
 	
-	if ( *file < 0) {	  
-	      printf ("Error en la creacion :1\n");
+	if ( *df < 0) {	  
+	      printf ("Error en la creacion del fichero %s\n",nombreFichero);
 	      exit (-1);
 	  }
 
 }
 
-void modificarUsuario(tipoRegistro *reg, int *file){
-	int numbyteescritos;
-	//resto -1 porque la persona de código n está en la posición n-1
-	lseek (*file, (reg->codigo-1) * TAM_REGISTRO, SEEK_SET); 
-	numbyteescritos=write (*file, reg, TAM_REGISTRO );
-        if (numbyteescritos < 0)
-		printf  ("Error al escribir registro codigo:%d\n",reg->codigo);
+void guardarRegistro(tipoRegistro *registro, int *df){
+	int numBytesEscritos;
+	// resto -1 porque la persona de codigo n esta en la posicion n-1
+	lseek (*df, (registro->codigo-1) * TAM_REGISTRO, SEEK_SET); 
+	numBytesEscritos=write (*df, registro, TAM_REGISTRO );
+        if (numBytesEscritos < 0)
+		printf  ("Error al escribir registro codigo:%d\n",registro->codigo);
         else
 		printf  ("registro escrito %d bytes,  codigo:%d: nombre:%s:\n",
-			numbyteescritos,reg->codigo, reg->nombre);
+			numBytesEscritos,registro->codigo, registro->nombre);
 
 }
 
-void leerUsuario(tipoRegistro *reg){
+void leerRegistro(tipoRegistro *registro){
 	char nombre[TAM_NOMBRE];
 	do{
-		printf( "Dar codigo del usuario:");
- 		scanf ("%d", &reg->codigo);
-	}while(reg->codigo<=0);
+		printf( "Introduzca el codigo del usuario: ");
+ 		scanf ("%d", &registro->codigo);
+	}while(registro->codigo<=0);
 
-  	printf( "Dar nombre del usuario:");
+  	printf("Introduzca el nombre del usuario: ");
  	scanf ("%s", nombre);
-	strcpy(reg->nombre,nombre);
+	strcpy(registro->nombre,nombre);
 }
-
