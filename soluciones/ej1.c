@@ -9,56 +9,58 @@
 /*
  * Este programa recibe un mombre de directorio y muestra por pantalla los nombres de
  * ficheros y directorios que contiene,	su modo, si tienen o no	permiso	de lectura para	el	* propietario,	si son directorios y, para los ficheros	modificados en los últimos 10 días
- * muestra su fecha de acceso	
+ * muestra su fecha de acceso
  *	*/
-int main (int argc, int *argv[]) {
-	int er;
-	char nomdir[100], nomfich[100],	resp[30];
-	struct stat atr;
-	DIR *d;
-	struct dirent *rd1;
+int main (int argc, char **argv) {
+	
+	char nombreDirectorio[100], nombreFichero[100];
+	struct stat atributo;
+	DIR * directorio;
+	struct dirent *fDirectorio;
 	time_t fecha;
-	
+
 	printf ("Nombre directorio\n");
-	fgets (nomdir, sizeof (nomdir),	stdin);
+	fgets (nombreDirectorio, sizeof (nombreDirectorio),	stdin);
+	//scanf("%s",nombreDirectorio);
 	/* hay que quitar el \n	del nombre del directorio*/
-	nomdir[strlen(nomdir)-1]='\0';
-	
+	nombreDirectorio[strlen(nombreDirectorio)-1]='\0';
+
 	fecha=time(&fecha);
-	
-	if ((d=opendir(nomdir))==NULL)	{
+
+	if ((directorio=opendir(nombreDirectorio))==NULL)	{
 		printf ("No existe ese directorio \n");
 		return	-1;
 	}
 	else {
-		while (( rd1 = readdir(d)) != NULL) {
-			if ( (strcmp(rd1->d_name, ".")!=0 ) && 
-			     (strcmp(rd1->d_name, "..")!=0)) {
-			        	
-				strcpy (nomfich, nomdir);
-				strcat (nomfich, "/");
-				strcat (nomfich, rd1->d_name);
+		while (( fDirectorio = readdir(directorio)) != NULL) {
+			//if ( (strcmp(fDirectorio->d_name, ".")==0 ) && 
+			//     (strcmp(fDirectorio->d_name, "..")==0)) {
+			        
+		        // El nombre del ficjero será nombreDirectorio + / +fDirectorio->d_name	
+			strcpy (nombreFichero, nombreDirectorio);
+			strcat (nombreFichero, "/");
+			strcat (nombreFichero, fDirectorio->d_name);
 				
-				er=stat	(nomfich, &atr);
-				if (S_ISDIR(atr.st_mode))						
-					printf ("directorio :%s:", nomfich);	
-				else
-					printf ("fichero :%s:", nomfich);	
+			if(stat	(nombreFichero, &atributo)>=0){
+				if (S_ISDIR(atributo.st_mode))				
+					printf ("directorio :%s:", nombreFichero);	
+				else if (S_ISREG(atributo.st_mode))
+					printf ("fichero :%s:", nombreFichero);	
 
-				printf	("modo :%#o:",	atr.st_mode);
-				if ((atr.st_mode & 0400) != 0)
+				printf	("modo :%#o:",	atributo.st_mode);
+				if ((atributo.st_mode & 0400) != 0)
 					printf	("permiso R para propietario\n");
-				//else printf ("No permiso R para propietario\n");
-				if (S_ISREG(atr.st_mode)){
+				else printf ("No permiso R para propietario\n");
+				if (S_ISREG(atributo.st_mode)){
 					/* ficheros modificados	en los ultimos 10 dias */
-					if ( (fecha - 10*24*60*60) <atr.st_mtime) {
-						printf ("FICHERO:%s: fecha acceso %s, en sgdos %d\n", 
-							rd1->d_name, ctime (&atr.st_mtime), atr.st_mtime);	
-			 		}
+					if ( (fecha - 10*24*60*60) <atributo.st_mtime) {
+						printf ("FICHERO:%s: fecha acceso %s, en sgdos %lu\n", 
+							fDirectorio->d_name, ctime (&atributo.st_mtime), atributo.st_mtime);	
+		 			}
 				}
 			}		
 		} //fin while
-		closedir (d);
+		closedir (directorio);
 	}
 	return 0;
 }/*	main*/

@@ -10,74 +10,74 @@
 const int MAX_NUMERO = 100;
 const char NOMBRE_FICH[30]="numeros.dat" ;
 
-void escribir(int file);
-void abrirEscritura(const char *nombre, int *file);
-void leer(int file);
-void abrirLectura(const char *nombre, int *file);
+void escribir(int df);
+void abrirEscritura(const char *nombre, int *df);
+void leer(int df);
+void abrirLectura(const char *nombre, int *df);
 
 int main ( int argc, char *argv[] ) 
 {
-	int file ;
+	int df ; // descriptor del fichero
 	int i ;
 
+	/* Escribir numeros */
+	abrirEscritura(NOMBRE_FICH,&df);
+        escribir(df);
 
-	
+        close(df);
 
-	/* Escribir n´meros */
-	//abrirEscritura(NOMBRE_FICH,&file);
-   // escribir(file);
+	/* Leer numeros */
 
-    //close(file);
+	abrirLectura(NOMBRE_FICH,&df);
+	leer(df);
 
-	/* Leer números */
-	
-	abrirLectura(NOMBRE_FICH,&file);
-	leer(file);
-    
 	/* Cerrar fichero */
-	close(file);
+	close(df);
 }
 
-void escribir(int file){
+void escribir(int df){
     int i;
     for (i=1; i< MAX_NUMERO; i++) {
-	  write (file, &i, sizeof (int) );
+	  write (df, &i, sizeof (int) );
     }
-    
+
 }
 
-void  leer(int file){
+void  leer(int df){
     int bytes_leidos;
-	int numero;
-	
-    bytes_leidos = read (file, &numero, sizeof(int));
+    int numero;
+
+    bytes_leidos = read (df, &numero, sizeof(int));
 	while ( bytes_leidos !=0 ){
 	        printf  ("%d\n",numero);
-	        bytes_leidos = read (file, &numero, sizeof(int));
+	        bytes_leidos = read (df, &numero, sizeof(int));
        	}
 }
 
-void abrirLectura(const char *nombre, int *file){
-	*file = open (nombre, O_RDONLY) ;
-	if (*file == -1) {
+void abrirLectura(const char *nombre, int *df){
+	*df = open (nombre, O_RDONLY) ;
+	if (*df == -1) {
     	fprintf (stderr, "No se ha podido abrir el fichero %s\n",nombre);
 	    exit (-1) ;
         }
-    
+
 }
 
-void abrirEscritura(const char *nombre, int *file){
-    /* Abrir fichero */
-    *file = open (nombre,O_APPEND|O_WRONLY) ;
-	if (-1 != *file) {
+void abrirEscritura(const char *nombre, int *df){
+    /* Abrir fichero para escritura anadiendo contenido al final*/
+    *df = open (nombre,O_APPEND|O_WRONLY) ;
+	if (-1 != *df) {
 	  printf ("El fichero %s ya existe, anyado al final\n",nombre);
 	}
 
-	if (-1 == *file) {
+	if (-1 == *df) {
 	  printf ("El fichero %s no existe\n",nombre);
 	  printf ("Se va a crear el fichero\n");
-          *file=open (nombre, O_CREAT| O_WRONLY, S_IWUSR|S_IRUSR) ;
-	 if (-1 == *file) {
+          // abrir el fichero para escritura, si no existe lo crea
+	  // S_IWUSR 00200 usuario tiene permiso para escribir (w)
+          // S_IRUSR  00400 usuario tiene permiso para leer (r)
+          *df=open (nombre, O_CREAT| O_WRONLY, S_IWUSR|S_IRUSR) ;
+	 if (-1 == *df) {
 	      printf ("Error en la creacion del fichero %s :1\n",nombre);
 	      exit (-1);
 	  }
